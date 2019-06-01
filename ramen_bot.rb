@@ -27,13 +27,18 @@ end
   sleep(10) # 読み込みを待つために５秒間処理を止める
   shop_name = []
   shop_rank = []
+  shop_url = []
   puts 'scrape now'
   shop_name_get = d.find_elements(:class => 'list-rst__rst-name-target')
-  shop_name_get.each { |n| 
-    shop_name.push(n.text)
-  }
+  shop_name_get.each { |n| shop_name.push(n.text) }
+  shop_rank_get = d.find_elements(:class => 'list-rst__rating-val')
+  shop_rank_get.each { |n| shop_rank.push(n.text) }
+  shop_url_get = d.find_elements(:class => 'cpy-rst-name')
+  shop_url_get.each { |n| shop_url.push(n[:href]) }
 
   p shop_name
+  p shop_rank
+  p shop_url
   #shop_name_get.each { |n| puts n.text.to_s }
   #shop_name.each { |n| puts n.text }
   #p shop_rank_get = d.find_elements(:class, 'c-rating__star')
@@ -41,8 +46,8 @@ end
   #return shop_name, shop_rank
   d.quit  #ブラウザ終了
   puts "scraping done..."
-  shop_name
-end
+  return shop_name, shop_rank, shop_url
+ end
 
 def shuffle_number
   rank_num = rand(1..20)
@@ -63,12 +68,12 @@ client.on :message do |data|
   when 'ラーメン' then
     #client.message channel: data.channel, text: "Hi <@#{data.user}>!" 
     url = 'https://tabelog.com/tokyo/rstLst/MC/?SrtT=rt&sk=%E3%83%A9%E3%83%BC%E3%83%A1%E3%83%B3&svd=20190601&svt=1900&svps=2&Srt=D&sort_mode=1'
-    shop_name = scrape(url)
+    shop_name, shop_rank, shop_url = scrape(url)
     rank_num, page_num = shuffle_number
     p rank_num
     p page_num
     #shop_name, shop_rank = scrape
-    client.message channel: data.channel, text: "オススメのラーメンは#{shop_name[rank_num]}だよ"
+    client.message channel: data.channel, text: "オススメのラーメンは「#{shop_name[rank_num]} | 評価#{shop_rank[rank_num]}」だよ#{shop_url[rank_num]}"
   when /^bot/ then
     client.message channel: data.channel, text: "Sorry <@#{data.user}>, what?"
   end
