@@ -17,14 +17,15 @@ client = Slack::RealTime::Client.new
 
 def setup_doc url
   puts 'setup_doc now'
-  driver = Selenium::WebDriver.for :chrome # ブラウザ起動
+  options = Selenium::WebDriver::Chrome::Options.new
+  options.add_argument('--headless')
+  driver = Selenium::WebDriver.for :chrome, options: options  # ヘッドレスモードでブラウザ起動
   driver.navigate.to url
   driver
 end
 
  def scrape url
   d = setup_doc url
-  sleep(10) # 読み込みを待つために５秒間処理を止める
   shop_name = []
   shop_rank = []
   shop_url = []
@@ -73,7 +74,7 @@ client.on :message do |data|
     p rank_num
     p page_num
     #shop_name, shop_rank = scrape
-    client.message channel: data.channel, text: "オススメのラーメンは「#{shop_name[rank_num]} | 評価#{shop_rank[rank_num]}」だよ#{shop_url[rank_num]}"
+    client.message channel: data.channel, text: "オススメのラーメンは「#{shop_name[rank_num]} | 評価#{shop_rank[rank_num]}」だよ\n#{shop_url[rank_num]}"
   when /^bot/ then
     client.message channel: data.channel, text: "Sorry <@#{data.user}>, what?"
   end

@@ -9,6 +9,7 @@ gem 'eventmachine'
 gem 'faye-websocket'
 gem 'nokogiri'
 gem 'pry-byebug'
-gem 'selenium-webdriver', '3.4.0'
+gem 'selenium-webdriver', '3.14.0'
+gem 'chromedriver-helper'
 
 # gem "rails"
