@@ -1,19 +1,24 @@
 require 'slack-ruby-client'
 require 'selenium-webdriver'
+require 'sinatra'
+require 'sinatra/reloader'
+require 'sinatra/json'
 
 
-Slack.configure do |config|
-  config.token = ENV['SLACK_API_TOKEN']
-  config.logger = Logger.new(STDOUT)
-  config.logger.level = Logger::INFO
-  fail 'Missing ENV[SLACK_API_TOKEN]!' unless config.token
+get '/' do
+  "Hoge"
 end
 
-Slack::RealTime::Client.config do |config|
-  config.websocket_ping = 30
-end
+post '/slack/commands' do
+  "FooBar"
+  # today = date_set
+  # rank_num, page_num = shuffle_number
+  # url = "https://tabelog.com/tokyo/rstLst/MC/#{page_num}/?Srt=D&SrtT=rt"
+  #  shop_name, shop_score, shop_url = scrape(url)
 
-client = Slack::RealTime::Client.new
+  # p url
+  # "オススメのラーメンは「#{shop_name[rank_num]} | 評価#{shop_score[rank_num]}」だよ\n#{shop_url[rank_num]}"
+end
 
 def setup_doc url
   puts 'setup_doc now'
@@ -58,38 +63,3 @@ def date_set
 end
 
 
-client.on :hello do
-  puts "Successfully connected, welcome '#{client.self.name}' to the '#{client.team.name}' team at https://#{client.team.domain}.slack.com."
-end
-
-client.on :message do |data|
-  puts data
-
-  client.typing channel: data.channel
-
-  case data.text
-  when 'ラーメン' then
-    today = date_set
-    rank_num, page_num = shuffle_number
-    url = "https://tabelog.com/tokyo/rstLst/MC/#{page_num}/?Srt=D&SrtT=rt"
-    shop_name, shop_score, shop_url = scrape(url)
-
-    p rank_num
-    p page_num
-    p url
-    client.message channel: data.channel, text: "オススメのラーメンは「#{shop_name[rank_num]} | 評価#{shop_score[rank_num]}」だよ\n#{shop_url[rank_num]}"
-  when /^bot/ then
-    client.message channel: data.channel, text: "Sorry <@#{data.user}>, what?"
-  end
-end
-
-client.on :close do |_data|
-  puts 'Connection closing, exiting.'
-end
-
-client.on :closed do |_data|
-  puts 'Connection has been disconnected.'
-  client.start!
-end
-
-client.start!
