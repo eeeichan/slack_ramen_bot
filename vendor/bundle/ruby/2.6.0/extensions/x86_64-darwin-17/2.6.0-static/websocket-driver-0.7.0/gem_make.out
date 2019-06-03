@@ -1,0 +1,15 @@
+current directory: /Users/goi/Projects/slack_ramen_bot/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.0/ext/websocket-driver
+/Users/goi/.rbenv/versions/2.6.0/bin/ruby -I /Users/goi/.rbenv/versions/2.6.0/lib/ruby/site_ruby/2.6.0 -r ./siteconf20190603-28746-107o8js.rb extconf.rb
+creating Makefile
+
+current directory: /Users/goi/Projects/slack_ramen_bot/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.0/ext/websocket-driver
+make "DESTDIR=" clean
+
+current directory: /Users/goi/Projects/slack_ramen_bot/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.0/ext/websocket-driver
+make "DESTDIR="
+compiling websocket_mask.c
+linking shared-object websocket_mask.bundle
+
+current directory: /Users/goi/Projects/slack_ramen_bot/vendor/bundle/ruby/2.6.0/gems/websocket-driver-0.7.0/ext/websocket-driver
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 websocket_mask.bundle ./.gem.20190603-28746-3a9orx
