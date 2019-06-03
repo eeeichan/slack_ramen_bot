@@ -20,12 +20,12 @@ def setup_doc url
   options = Selenium::WebDriver::Chrome::Options.new
   options.add_argument('--headless')
   driver = Selenium::WebDriver.for :chrome, options: options  # ヘッドレスモードでブラウザ起動
-  driver.navigate.to url
   driver
 end
 
- def scrape url
+def scrape url
   d = setup_doc url
+  d.get(url)
   shop_name = []
   shop_rank = []
   shop_url = []
@@ -40,21 +40,23 @@ end
   p shop_name
   p shop_rank
   p shop_url
-  #shop_name_get.each { |n| puts n.text.to_s }
-  #shop_name.each { |n| puts n.text }
-  #p shop_rank_get = d.find_elements(:class, 'c-rating__star')
-  #shop_rank .each { |n| puts n.text }
-  #return shop_name, shop_rank
   d.quit  #ブラウザ終了
   puts "scraping done..."
   return shop_name, shop_rank, shop_url
- end
+end
 
 def shuffle_number
   rank_num = rand(1..20)
-  page_num = rand(1..20)
+  page_num = rand(1..60)
   return rank_num, page_num
 end
+
+def date_set
+  d = Time.new
+  set_date = d.strftime("%Y%m%d")
+  set_date
+end
+
 
 client.on :hello do
   puts "Successfully connected, welcome '#{client.self.name}' to the '#{client.team.name}' team at https://#{client.team.domain}.slack.com."
@@ -67,14 +69,15 @@ client.on :message do |data|
 
   case data.text
   when 'ラーメン' then
-    #client.message channel: data.channel, text: "Hi <@#{data.user}>!" 
-    url = 'https://tabelog.com/tokyo/rstLst/MC/?SrtT=rt&sk=%E3%83%A9%E3%83%BC%E3%83%A1%E3%83%B3&svd=20190601&svt=1900&svps=2&Srt=D&sort_mode=1'
-    shop_name, shop_rank, shop_url = scrape(url)
+    today = date_set
     rank_num, page_num = shuffle_number
+    url = "https://tabelog.com/tokyo/rstLst/MC/#{page_num}/?Srt=D&SrtT=rt"
+    shop_name, shop_score, shop_url = scrape(url)
+
     p rank_num
     p page_num
-    #shop_name, shop_rank = scrape
-    client.message channel: data.channel, text: "オススメのラーメンは「#{shop_name[rank_num]} | 評価#{shop_rank[rank_num]}」だよ\n#{shop_url[rank_num]}"
+    p url
+    client.message channel: data.channel, text: "オススメのラーメンは「#{shop_name[rank_num]} | 評価#{shop_score[rank_num]}」だよ\n#{shop_url[rank_num]}"
   when /^bot/ then
     client.message channel: data.channel, text: "Sorry <@#{data.user}>, what?"
   end
