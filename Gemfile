@@ -11,5 +11,7 @@ gem 'nokogiri'
 gem 'pry-byebug'
 gem 'selenium-webdriver', '3.14.0'
 gem 'chromedriver-helper'
+gem 'sinatra'
+gem 'sinatra-contrib'
 
 # gem "rails"
