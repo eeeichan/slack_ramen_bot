@@ -1,16 +1,13 @@
-require 'slack-ruby-client'
 require 'selenium-webdriver'
-require 'sinatra'
-require 'sinatra/reloader'
-require 'sinatra/json'
+require 'google_drive'
 
+session = GoogleDrive::Session.from_config("config.json")
+# https://docs.google.com/spreadsheets/d/18fgahTOPCefIgbcQXnmTjx42vFpsiTyO4DDRUc3dFfw/edit?usp=sharing
+sp = session.spreadsheet_by_key("18fgahTOPCefIgbcQXnmTjx42vFpsiTyO4DDRUc3dFfw").worksheets[0]
+sp[2, 1] = "foo" # セルA2
+sp[2, 2] = "bar" # セルB2
+sp.save
 
-get '/' do
-  "Hoge"
-end
-
-post '/slack/commands' do
-  "FooBar"
   # today = date_set
   # rank_num, page_num = shuffle_number
   # url = "https://tabelog.com/tokyo/rstLst/MC/#{page_num}/?Srt=D&SrtT=rt"
@@ -18,7 +15,7 @@ post '/slack/commands' do
 
   # p url
   # "オススメのラーメンは「#{shop_name[rank_num]} | 評価#{shop_score[rank_num]}」だよ\n#{shop_url[rank_num]}"
-end
+
 
 def setup_doc url
   puts 'setup_doc now'

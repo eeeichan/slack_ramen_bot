@@ -1,13 +1,23 @@
 # slack_ramen_bot
 
-## 起動手順
-```
-1. $ brew install chromedriver
-2. $ bundle install
-3. $ export SLACK_API_TOKEN=xoxb-11111111111-11111111111-11111111111-xxxxxxxxxx    //Slack botのToken-keyを設定
-4. $ bundle exec ruby slack_ramen_bot.rb   //起動
-5. Slackにて、「ラーメン」と呟く
-```
+## 使用技術
+- Ruby
+- GAS
+- Slash Command
+- GCP
+- Selenium
 
-備考：Slack botのToken-keyの確認方法は下記URL先を参照<br />
-https://qiita.com/ykhirao/items/0d6b9f4a0cc626884dbb
+## 概要
+1. Slackから「/ramen」入力
+2. Slash Command処理が走る
+3. GASにてPOSTを受け取る
+4. スプレッドシート(DB)からデータ取得する
+5. GASにて取得したデータを元に返すJsonパラメータを組む
+6. SlackにJsonデータを返す
+7. Slackにオススメのラーメン店出力
+
+-データについて-
+`Ramen_bot.rb` にて、*gem clockwork* を用いてスクレイピングを定期実行
+スクレイピングの頻度は１ヶ月に１回
+そのため、１ヶ月に１回ラーメンのデータは書き換わる
+
