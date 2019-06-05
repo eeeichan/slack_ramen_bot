@@ -1,20 +1,37 @@
 require 'selenium-webdriver'
 require 'google_drive'
 
-session = GoogleDrive::Session.from_config("config.json")
-# https://docs.google.com/spreadsheets/d/18fgahTOPCefIgbcQXnmTjx42vFpsiTyO4DDRUc3dFfw/edit?usp=sharing
-sp = session.spreadsheet_by_key("18fgahTOPCefIgbcQXnmTjx42vFpsiTyO4DDRUc3dFfw").worksheets[0]
-sp[2, 1] = "foo" # セルA2
-sp[2, 2] = "bar" # セルB2
-sp.save
 
-  # today = date_set
-  # rank_num, page_num = shuffle_number
-  # url = "https://tabelog.com/tokyo/rstLst/MC/#{page_num}/?Srt=D&SrtT=rt"
-  #  shop_name, shop_score, shop_url = scrape(url)
+def spread_set
+  # spreadsheet set
+  session = GoogleDrive::Session.from_config("config.json")
+  ## https://docs.google.com/spreadsheets/d/18fgahTOPCefIgbcQXnmTjx42vFpsiTyO4DDRUc3dFfw/edit?usp=sharing
+  sheet = session.spreadsheet_by_key("18fgahTOPCefIgbcQXnmTjx42vFpsiTyO4DDRUc3dFfw").worksheets[0]
+  sheet
+end
 
-  # p url
-  # "オススメのラーメンは「#{shop_name[rank_num]} | 評価#{shop_score[rank_num]}」だよ\n#{shop_url[rank_num]}"
+def spread_reset sheet
+  # sheet max range get
+  row = 2
+  while sheet.input_value(row,2) != "" do
+    sheet.input_value(row,3) != "" && sheet.input_value(row,4) != "" ? row += 1 : break
+  end
+
+  # sheet reset
+  row.downto(2) do |row|
+    sheet[row,1] = ""
+    sheet[row,2] = ""
+    sheet[row,3] = ""
+    sheet[row,4] = ""
+  end
+  sheet.save
+end
+
+
+
+#sp[2, 1] = "foo" # セルA2
+#sp[2, 2] = "bar" # セルB2
+#sp.save
 
 
 def setup_doc url
@@ -59,4 +76,33 @@ def date_set
   set_date
 end
 
+
+  sheet = spread_set
+  spread_reset sheet
+  # 
+  #today = date_set
+  #rank_num, page_num = shuffle_number
+  page_num = 1
+  count = 0
+  60.times do
+    shop_num = 0
+    url = "https://tabelog.com/tokyo/rstLst/MC/#{page_num}/?Srt=D&SrtT=rt"
+    shop_name, shop_score, shop_url = scrape(url)
+
+    val_num = shop_name.count
+    row = 1 + (count * 20)
+    val_num.times do
+      sheet[row+1,1] = row
+      sheet[row+1,2] = shop_name[shop_num]
+      sheet[row+1,3] = shop_score[shop_num]
+      sheet[row+1,4] = shop_url[shop_num]
+      row += 1
+      shop_num += 1
+    end
+    page_num += 1
+    count += 1
+    sheet.save
+  end
+  # p url
+  # "オススメのラーメンは「#{shop_name[rank_num]} | 評価#{shop_score[rank_num]}」だよ\n#{shop_url[rank_num]}"
 
