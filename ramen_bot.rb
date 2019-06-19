@@ -1,5 +1,6 @@
 require 'selenium-webdriver'
 require 'google_drive'
+require 'pg'
 
 
 def spread_set
@@ -76,7 +77,23 @@ def date_set
   set_date
 end
 
+def db_prepara
+  connection = PG::connect(:host => "", :user => "goi", :password => "", :dbname => "ramen_db", :port => "")
+  connection.internal_encoding = "UTF-8"
+  sql = "drop table shop_data"
+  connection.exec(sql)
+  sql = "create table shop_data (
+         id serial PRIMARY KEY,
+         shop_name text,
+         shop_score text,
+         shop_url text
+         );"
+  connection.exec(sql)
+  connection
+end
 
+#begin
+#  db = db_prepara
   sheet = spread_set
   spread_reset sheet
   # 
@@ -88,6 +105,12 @@ end
     shop_num = 0
     url = "https://tabelog.com/tokyo/rstLst/MC/#{page_num}/?Srt=D&SrtT=rt"
     shop_name, shop_score, shop_url = scrape(url)
+
+    #20.times do |i|
+    # (shop_name[i]).gsub!(/'/, "''") if (shop_name[i]).to_s.include?("'")
+    #  sql = "INSERT INTO shop_data (shop_name, shop_score, shop_url) VALUES ('#{shop_name[i]}','#{shop_score[i]}','#{shop_url[i]}');"
+    #db.exec(sql)
+    #end
 
     val_num = shop_name.count
     row = 1 + (count * 20)
@@ -103,6 +126,9 @@ end
     count += 1
     sheet.save
   end
+#ensure
+  #db.finish
+#end
   # p url
   # "オススメのラーメンは「#{shop_name[rank_num]} | 評価#{shop_score[rank_num]}」だよ\n#{shop_url[rank_num]}"
 

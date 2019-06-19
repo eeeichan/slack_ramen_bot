@@ -14,5 +14,8 @@ gem 'chromedriver-helper'
 gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'google_drive'
+gem 'async-websocket', '~> 0.8.0'
+gem 'pg'
+
 
 # gem "rails"
